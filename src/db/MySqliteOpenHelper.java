@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MySqliteOpenHelper extends SQLiteOpenHelper {
 //provience表创建语句
 	public static final String CREATE_PROVINCE="create table province("+"id integer primary key autoincrement,"+
-"provience_name text,"+"provience_code text)";
+"province_name text,"+"province_code text)";
 //city表创建语句
 	public static final String CREATE_CITY="create table city("+"id integer primary key autoincrement,"+
 "city_name text,"+"city_code text,"+"province_id integer)";
