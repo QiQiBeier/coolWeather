@@ -1,5 +1,6 @@
 package com.coolweather.app.util;
 
+import java.net.ContentHandler;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -7,15 +8,15 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.coolweather.app.model.City;
-import com.coolweather.app.model.CoolWeatherDB;
-import com.coolweather.app.model.County;
-import com.coolweather.app.model.Province;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+
+import com.coolweather.app.model.City;
+import com.coolweather.app.model.CoolWeatherDB;
+import com.coolweather.app.model.County;
+import com.coolweather.app.model.Province;
 
 public class Utility {
 	//解析和处理服务器返回的省级数据
@@ -59,9 +60,9 @@ public class Utility {
 	//解析和处理服务器返回的县级数据
 	public static boolean handleCountiesResponse(CoolWeatherDB coolWeatherDB,String response,int cityId) {
 		if (!TextUtils.isEmpty(response)) {
-			String[] allCities=response.split(",");
-			if (allCities!=null && allCities.length>0) {
-				for (String c : allCities) {
+			String[] allCounties=response.split(",");
+			if (allCounties!=null && allCounties.length>0) {
+				for (String c : allCounties) {
 					String[] array=c.split("\\|");
 					County county=new County();
 					county.setCountyCode(array[0]);
@@ -76,7 +77,7 @@ public class Utility {
 	}
 	public static void handleWeatherResponse(Context context,String response) {
 		try {
-			JSONObject jsonObject=new JSONObject();
+			JSONObject jsonObject=new JSONObject(response);
 			//获取与键weatherinfo相关的json对象
 			JSONObject weatherInfo=jsonObject.getJSONObject("weatherinfo");
 			//获取与键相关的字符串
@@ -87,6 +88,7 @@ public class Utility {
 			String weatherDesp=weatherInfo.getString("weather");
 			String publishTime=weatherInfo.getString("ptime");
 			saveWeatherInfo(context, cityName, weatherCode, temp1, temp2, weatherDesp, publishTime);
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -95,7 +97,7 @@ public class Utility {
 	//将服务器返回的所有天气信息存储到SharePreferences文件中
 	public static void  saveWeatherInfo(Context context,String cityName,String weatherCode,String temp1,String temp2,String weatherDesp,String publishTime) {
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy年M月d日",Locale.CHINA);
-		SharedPreferences.Editor editor=PreferenceManager.getDefaultSharedPreferences(context).edit();
+		SharedPreferences.Editor editor=context.getSharedPreferences("weather", context.MODE_PRIVATE).edit();
 		editor.putBoolean("city_selected", true);
 		editor.putString("city_name", cityName);
 		editor.putString("weather_code", weatherCode);
